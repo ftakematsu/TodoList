@@ -1,9 +1,38 @@
-import React from "react";
+import React, {useRef} from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { EvilIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { CheckBox } from 'react-native-elements';
 
 function Todo({item, checkTodo, setSelectedId}) {
+
+  const [isVisible, setIsVisible] = React.useState(true);
+  const [isChecked, setIsChecked] = React.useState(item.status);
+
+  const alterarStatusItemApi = async () => {
+    const response = await fetch("https://22e0c9f7-1ff9-45c2-b170-a410f270df47-ap-southeast-1.apps.astra.datastax.com/api/rest/v2/keyspaces/todolist/todos/" + item.id, {
+      method: "PATCH",
+      headers: {
+        'X-Cassandra-Token': 'AstraCS:YQLqLEezeziqaoasRIWpciUu:9fd53af7e76c27c85705477dc2deca6d20e79302339bfdd45a2faf90dbb11d57'
+      },
+      body: JSON.stringify({
+        status: (!isChecked) ? 1 : 0
+      })
+    }).then((response) => {
+      setIsChecked(!isChecked);
+    });
+  }
+
+  const handleCheck = () => {
+    alterarStatusItemApi();
+  }
+
+  const handleVisible = () => {
+    setIsVisible(!isVisible);
+    //alert("Você removeu o item");
+    // TODO incluir o comando para remover o item a partir da API
+  }
 
   const selectItem = () => {
     //alert("Você concluiu a tarefa " + item.id + ": " + item.title);
@@ -11,13 +40,71 @@ function Todo({item, checkTodo, setSelectedId}) {
     checkTodo(item);
   }
 
-  return (
-    <TouchableOpacity 
-      onPress={ selectItem } 
-      style={ (item.status==1) ? styles.itemChecked : styles.itemNonChecked }
+  const swipeRef = useRef();
+
+  const closeSwipable = () => {
+    swipeRef?.current?.close();
+  }
+
+  const rightAction = () => {
+    return (
+      <View style={styles.rightSwipe}>
+        <Text style={{ color: "#fff" }}>Remover</Text>
+      </View>
+    );
+  }
+
+  const leftAction = () => {
+    if (isChecked) {
+      return (
+        <View style={styles.leftSwipeIncomplete}>
+          <Text style={{ color: '#fff' }}>Desmarcar</Text>
+        </View>
+      );
+    }
+    else {
+      return (
+        <View style={styles.leftSwipeComplete}>
+          <Text style={{ color: "#fff" }}>Marcar</Text>
+        </View>
+      );
+    }
+  }
+
+
+  // Se estiver visível, retornar vazio
+  if (isVisible === false) {
+    return (
+      <View></View>
+    );
+  }
+  /* Aqui define a aparência de cada item = item.name */
+  return ( 
+    <Swipeable
+      ref={swipeRef}
+      onSwipeableOpen={closeSwipable}
+      onSwipeableRightOpen={handleVisible}
+      onSwipeableLeftOpen={handleCheck}
+      renderLeftActions={leftAction}
+      renderRightActions={rightAction}
+      overshootFriction={1}
+      friction={1}
+      containerStyle={{overflow: 'hidden'}}
     >
-      <Text style={styles.title}>{item.name}</Text>
-    </TouchableOpacity>
+        <View style={styles.item}>
+          <CheckBox
+            style={styles.toggle}
+            checkedIcon='check-circle'
+            uncheckedIcon='radio-button-unchecked'
+            checked={isChecked}
+            onIconPress={handleCheck}
+            color={'#3293b3'}
+            iconType={'material'}
+          />
+          <Text style={isChecked ? styles.complete : styles.incomplete}>{item.name}</Text>
+          <TouchableOpacity onPress={handleVisible}><EvilIcons name='trash' size={28} color='#af5b5e'/></TouchableOpacity>
+        </View>
+    </Swipeable>
   );
 
 }

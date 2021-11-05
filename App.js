@@ -22,7 +22,12 @@ export default function App() {
 
       const dadosTodos = await response.json();
       //alert(dadosTodos.data); 
-      setMyTodoList(dadosTodos.data);
+      
+      let dadosOrdenados = dadosTodos.data.sort( function(a, b) {
+        return a.id - b.id;
+      });
+
+      setMyTodoList(dadosOrdenados);
       setTotalItens(dadosTodos.count);
     }
     catch (error) { 
@@ -32,8 +37,8 @@ export default function App() {
 
   const inserirTodo = async (text) => {
     try {
-      //alert(text);
       let idAtual = totalItens + 1;
+      //let idAtual = myTodoList[myTodoList.length-1].id + 1;
       // Criando um objeto no formato JSON
 
       const response = await fetch("https://22e0c9f7-1ff9-45c2-b170-a410f270df47-ap-southeast-1.apps.astra.datastax.com/api/rest/v2/keyspaces/todolist/todos",
@@ -49,7 +54,7 @@ export default function App() {
         })
       }).then((response) => {
           //buscarTodos();
-          alert("Todo incluído com sucesso!");
+          //alert("Todo incluído com sucesso!");
       }).catch((error) => {
         //alert(error);
       });
