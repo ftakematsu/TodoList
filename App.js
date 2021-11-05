@@ -22,6 +22,9 @@ export default function App() {
 
       const dadosTodos = await response.json();
       //alert(dadosTodos.data); 
+      let dadosOrdenados = dadosTodos.data.sort(function(a, b) {
+        return a.id - b.id;
+      });
       setMyTodoList(dadosTodos.data);
       setTotalItens(dadosTodos.count);
     }

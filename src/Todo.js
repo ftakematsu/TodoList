@@ -12,12 +12,13 @@ function Todo({item, checkTodo, setSelectedId}) {
 
   const handleCheck = () => {
     setIsChecked(!isChecked); 
+    
     // TODO incluir o comando para definir a tarefa como concluída
   }
 
   const handleVisible = () => {
     setIsVisible(!isVisible);
-    alert("Você removeu o item");
+    alert("Você removeu o item " + item.id);
     // TODO incluir o comando para remover o item a partir da API
   }
   
