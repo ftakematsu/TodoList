@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { EvilIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 function Todo({item, checkTodo, setSelectedId}) {
 
