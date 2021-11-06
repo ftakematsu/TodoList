@@ -24,14 +24,23 @@ function Todo({item, checkTodo, setSelectedId}) {
     });
   }
 
+  const removerItemApi = async () => {
+    const response = await fetch("https://22e0c9f7-1ff9-45c2-b170-a410f270df47-ap-southeast-1.apps.astra.datastax.com/api/rest/v2/keyspaces/todolist/todos/" + item.id, {
+      method: "DELETE",
+      headers: {
+        'X-Cassandra-Token': 'AstraCS:YQLqLEezeziqaoasRIWpciUu:9fd53af7e76c27c85705477dc2deca6d20e79302339bfdd45a2faf90dbb11d57'
+      }
+    }).then((response) => {
+      setIsVisible(!isVisible);
+    });
+  }
+
   const handleCheck = () => {
     alterarStatusItemApi();
   }
 
   const handleVisible = () => {
-    setIsVisible(!isVisible);
-    //alert("Você removeu o item");
-    // TODO incluir o comando para remover o item a partir da API
+    removerItemApi();
   }
 
   const selectItem = () => {

@@ -37,8 +37,8 @@ export default function App() {
 
   const inserirTodo = async (text) => {
     try {
-      let idAtual = totalItens + 1;
-      //let idAtual = myTodoList[myTodoList.length-1].id + 1;
+      //let idAtual = totalItens + 1;
+      let idAtual = myTodoList[myTodoList.length-1].id + 1; // Lógica fundamental para considerar quando dados são apagados
       // Criando um objeto no formato JSON
 
       const response = await fetch("https://22e0c9f7-1ff9-45c2-b170-a410f270df47-ap-southeast-1.apps.astra.datastax.com/api/rest/v2/keyspaces/todolist/todos",
